@@ -1,0 +1,4 @@
+clientId	name	barcode	mrp	imageUrl
+101	Product A	ABC123	100.00	https://via.placeholder.com/300x200?text=Product+A
+102	Product B	XYZ456	150.00	https://via.placeholder.com/300x200?text=Product+B
+103	Product C	DEF789	200.00	https://via.placeholder.com/300x200?text=Product+C 

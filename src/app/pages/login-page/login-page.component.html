@@ -1,0 +1,87 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card login-card">
+                <div class="card-header">
+                    <h2 class="text-center mb-0">Login</h2>
+                </div>
+                <div class="card-body">
+                    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+                        <!-- Email Field -->
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input 
+                                    type="email" 
+                                    class="form-control" 
+                                    id="email" 
+                                    name="email" 
+                                    [(ngModel)]="loginData.email" 
+                                    required 
+                                    email
+                                    #emailInput="ngModel">
+                            </div>
+                            <div class="validation-message" *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)">
+                                <small class="text-danger" *ngIf="emailInput.errors?.['required']">Email is required</small>
+                                <small class="text-danger" *ngIf="emailInput.errors?.['email']">Please enter a valid email</small>
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input 
+                                    type="password" 
+                                    class="form-control" 
+                                    id="password" 
+                                    name="password" 
+                                    [(ngModel)]="loginData.password" 
+                                    required 
+                                    minlength="6"
+                                    maxlength="20"
+                                    #passwordInput="ngModel">
+                            </div>
+                            <div class="validation-message" *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)">
+                                <small class="text-danger" *ngIf="passwordInput.errors?.['required']">Password is required</small>
+                                <small class="text-danger" *ngIf="passwordInput.errors?.['minlength']">Password must be at least 6 characters</small>
+                                <small class="text-danger" *ngIf="passwordInput.errors?.['maxlength']">Password cannot exceed 20 characters</small>
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div class="alert alert-danger" *ngIf="errorMessage">
+                            {{ errorMessage }}
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-group">
+                            <button 
+                                type="submit" 
+                                class="btn btn-primary btn-ripple w-100" 
+                                [disabled]="isLoading || loginForm.invalid">
+                                <span *ngIf="!isLoading">Login</span>
+                                <span *ngIf="isLoading">
+                                    <i class="fas fa-spinner fa-spin"></i> Logging in...
+                                </span>
+                            </button>
+                        </div>
+
+                        <!-- Signup Link -->
+                        <div class="text-center mt-3">
+                            <p class="mb-0">Don't have an account? 
+                                <a routerLink="/signup" class="text-primary">Sign up here</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

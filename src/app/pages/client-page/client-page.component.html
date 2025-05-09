@@ -1,0 +1,144 @@
+<div class="client-page-container">
+    <h2>Clients</h2>
+  
+    <div class="d-flex justify-content-between mb-3">
+      <div *hasRole="'SUPERVISOR'">
+        <button class="btn btn-primary btn-ripple" (click)="openAddClientModal()">
+          <i class="fas fa-plus"></i> Add Client
+        </button>
+      </div>
+      <div class="search-box">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search clients..." 
+                   [(ngModel)]="searchTerm" (ngModelChange)="onSearchInput()">
+          </div>
+      </div>
+    </div>
+    <div class="col-12" *ngIf="!clients || clients.length === 0">
+      <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle me-2"></i>
+        {{ isSearchActive ? 'No matching clients found.' : 'No client found.' }}
+      </div>
+    </div>
+    <table class="table table-striped mt-3" *ngIf="clients && clients.length > 0">
+      <thead>
+        <tr>
+          <th>S.No</th>
+          <th>Client Name</th>
+          <th *hasRole="'SUPERVISOR'">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let client of clients; let i = index">
+          <td>{{ (currentPage * itemsPerPage) + i + 1 }}</td>
+          <td>{{ client.clientName }}</td>
+          <td>
+            <span *hasRole="'SUPERVISOR'">
+              <button class="btn btn-sm edit-btn" (click)="openEditClientModal(client)">
+                <i class="fas fa-edit"></i>
+              </button>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-container" *ngIf="totalPages > 1">
+      <nav aria-label="Client pagination">
+        <ul class="pagination justify-content-center">
+          <!-- First Page -->
+          <li class="page-item" [class.disabled]="currentPage === 0">
+            <a class="page-link" (click)="onPageChange(0)" [class.disabled]="currentPage === 0">
+              <i class="fas fa-angle-double-left"></i>
+            </a>
+          </li>
+          
+          <!-- Previous Page -->
+          <li class="page-item" [class.disabled]="currentPage === 0">
+            <a class="page-link" (click)="onPageChange(currentPage - 1)" [class.disabled]="currentPage === 0">
+              <i class="fas fa-angle-left"></i>
+            </a>
+          </li>
+
+          <!-- Page Numbers -->
+          <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" 
+              [class.active]="currentPage === i">
+            <a class="page-link" (click)="onPageChange(i)">{{ i + 1 }}</a>
+          </li>
+
+          <!-- Next Page -->
+          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+            <a class="page-link" (click)="onPageChange(currentPage + 1)" [class.disabled]="currentPage === totalPages - 1">
+              <i class="fas fa-angle-right"></i>
+            </a>
+          </li>
+
+          <!-- Last Page -->
+          <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+            <a class="page-link" (click)="onPageChange(totalPages - 1)" [class.disabled]="currentPage === totalPages - 1">
+              <i class="fas fa-angle-double-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="modal fade show d-block" *ngIf="showAddModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Client</h5>
+          <button type="button" class="close" (click)="closeAddClientModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+          <!-- Form for adding new client -->
+          <form (ngSubmit)="submitNewClient()" #addClientForm="ngForm">
+            <div class="form-group">
+              <label for="clientName">Client Name</label>
+              <input type="text" id="clientName" [(ngModel)]="newClient.clientName" name="clientName" class="form-control" required />
+            </div>
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeAddClientModal()">Cancel</button>
+              <button type="submit" class="btn btn-success" [disabled]="!addClientForm.form.valid">Add Client</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" *ngIf="showAddModal"></div>
+
+  <div class="modal fade show d-block" *ngIf="showEditModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Client</h5>
+          <button type="button" class="close" (click)="closeEditClientModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- Form for editing client -->
+          <form (ngSubmit)="submitEditClient()" #editClientForm="ngForm">
+            <div class="form-group">
+              <label for="editClientName">Client Name</label>
+              <input type="text" id="editClientName" [(ngModel)]="editClient.clientName" name="editClientName" class="form-control" required />
+            </div>
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeEditClientModal()">Cancel</button>
+              <button type="submit" class="btn btn-success" [disabled]="!editClientForm.form.valid">Update Client</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" *ngIf="showEditModal"></div>
+

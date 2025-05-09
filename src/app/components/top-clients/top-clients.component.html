@@ -1,0 +1,28 @@
+<div class="top-clients-container">
+  <div class="header">
+    <div class="metric-selector">
+      <label for="metric">Metric:</label>
+      <select id="metric" [(ngModel)]="selectedMetric" (change)="onMetricChange()">
+        <option value="value">Total Value</option>
+        <option value="volume">Order Volume</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div *ngIf="isLoading" class="loading">
+      Loading...
+    </div>
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+    <div *ngIf="!isLoading && !error" class="chart">
+      <canvas baseChart
+        [data]="pieChartData"
+        [options]="pieChartOptions"
+        [type]="'pie'">
+      </canvas>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,38 @@
+<div class="daily-report-container">
+  <div class="report-header">
+    <h2>Daily Revenue Report</h2>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+      <i class="fas" [class.fa-sync-alt]="!isLoading" [class.fa-spinner]="isLoading" [class.fa-spin]="isLoading"></i>
+    </button>
+  </div>
+
+
+  <div class="table-container">
+    <div *ngIf="error" class="error-message">
+      {{error}}
+    </div>
+    
+    <div *ngIf="isLoading" class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+
+    <table *ngIf="!isLoading && !error" class="daily-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Orders</th>
+          <th>Items</th>
+          <th>Revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of dailyData">
+          <td>{{formatDate(item.date)}}</td>
+          <td>{{item.orderCount}}</td>
+          <td>{{item.totalItems}}</td>
+          <td>₹{{item.revenue | number:'1.2-2'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> 

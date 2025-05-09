@@ -1,0 +1,73 @@
+
+          
+            <div class="gist-content">
+              <div class="system-description">
+                <h2>Point of Sale Application</h2>
+                
+                <div class="description-stats">
+                  <div class="stat-item">
+                    <i class="fas fa-bolt"></i>
+                    <span>Real-time Processing</span>
+                  </div>
+                  <div class="stat-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure Transactions</span>
+                  </div>
+                  <div class="stat-item">
+                    <i class="fas fa-sync"></i>
+                    <span>24/7 Availability</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="feature-stats">
+                <a [routerLink]="['/clients']" class="feature-card">
+                  <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h3>Client Management</h3>
+                    <p class="feature-value">Manage customer data</p>
+                  </div>
+                </a>
+                <a [routerLink]="['/inventory']" class="feature-card">
+                  <div class="feature-icon">
+                    <i class="fas fa-box"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h3>Product Inventory</h3>
+                    <p class="feature-value">Track stock levels</p>
+                  </div>
+                </a>
+                <a [routerLink]="['/orders']" class="feature-card">
+                  <div class="feature-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h3>Order Processing</h3>
+                    <p class="feature-value">Handle transactions</p>
+                  </div>
+                </a>
+                <a [routerLink]="['/sales-report']" class="feature-card" *hasRole="'SUPERVISOR'">
+                  <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h3>Sales Analytics</h3>
+                    <p class="feature-value">Monitor performance</p>
+                  </div>
+                </a>
+                <a [routerLink]="['/daily-report']" class="feature-card" *hasRole="'SUPERVISOR'">
+                  <div class="feature-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h3>Daily Reports</h3>
+                    <p class="feature-value">Generate insights</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+       
+       
+     

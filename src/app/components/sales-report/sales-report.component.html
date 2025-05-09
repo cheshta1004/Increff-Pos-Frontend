@@ -1,0 +1,68 @@
+<div class="sales-report-container">
+  <div class="report-header">
+    <h2>Sales Report</h2>
+    <div class="header-actions">
+      <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+        <i class="fas" [class.fa-sync-alt]="!isLoading" [class.fa-spinner]="isLoading" [class.fa-spin]="isLoading"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="startDate">Start Date:</label>
+      <input type="date" id="startDate" [(ngModel)]="filter.startDate" (change)="loadRevenueData()">
+    </div>
+    <div class="filter-group">
+      <label for="endDate">End Date:</label>
+      <input type="date" id="endDate" [(ngModel)]="filter.endDate" (change)="loadRevenueData()">
+    </div>
+    <div class="filter-group">
+      <label for="clientName">Client Name:</label>
+      <input type="text" id="clientName" [(ngModel)]="filter.clientName" (change)="loadRevenueData()" placeholder="Enter client name">
+    </div>
+    <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+  </div>
+
+  <div class="summary-cards">
+    <div class="summary-card">
+      <h3>Total Revenue</h3>
+      <p class="value">₹{{totalRevenue | number:'1.2-2'}}</p>
+    </div>
+    <div class="summary-card">
+      <h3>Total Quantity</h3>
+      <p class="value">{{totalQuantity}}</p>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <div *ngIf="error" class="error-message">
+      {{error}}
+    </div>
+    
+    <div *ngIf="isLoading" class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+    </div>
+
+    <table *ngIf="!isLoading && !error" class="sales-table">
+      <thead>
+        <tr>
+          <th>Client Name</th>
+          <th>Product Name</th>
+          <th>Barcode</th>
+          <th>Quantity</th>
+          <th>Revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of revenueData">
+          <td>{{item.clientName}}</td>
+          <td>{{item.productName}}</td>
+          <td>{{item.barcode}}</td>
+          <td>{{item.quantity}}</td>
+          <td>₹{{item.revenue | number:'1.2-2'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> 

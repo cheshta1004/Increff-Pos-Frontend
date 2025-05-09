@@ -1,0 +1,16 @@
+<div class="chart-controls">
+  <div class="control-group">
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" [(ngModel)]="startDate" (change)="fetchRevenueData()">
+  </div>
+</div>
+
+
+<div class="chart-wrapper">
+  <canvas baseChart
+    [data]="lineChartData"
+    [type]="'line'"
+    [options]="chartOptions">
+  </canvas>
+</div>
+  

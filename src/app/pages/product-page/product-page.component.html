@@ -1,0 +1,482 @@
+<div class="container">
+  <h2>Products</h2>
+  
+  <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex align-items-center gap-3">
+      <span *hasRole="'SUPERVISOR'">
+        <button class="btn btn-primary btn-ripple" (click)="openAddProductModal()">
+          <i class="fas fa-plus"></i> Add Product
+        </button>
+      </span>
+      <span *hasRole="'SUPERVISOR'">
+        <button class="btn btn-secondary btn-ripple" (click)="triggerFileInput()">
+          <i class="fas fa-file-import"></i> Import Product TSV
+        </button>
+      </span>
+      <span *hasRole="'SUPERVISOR'">
+        <button class="btn btn-outline-secondary btn-ripple" (click)="downloadProductTemplate()">
+          <i class="fas fa-download"></i> Download Product Template
+        </button>
+      </span>
+      <span *hasRole="'SUPERVISOR'">
+        <button class="btn btn-info btn-ripple" (click)="triggerInventoryFileInput()">
+          <i class="fas fa-boxes"></i> Import Inventory TSV
+        </button>
+      </span>
+      <span *hasRole="'SUPERVISOR'">
+        <button class="btn btn-outline-secondary btn-ripple" (click)="downloadInventoryTemplate()">
+          <i class="fas fa-download"></i> Download Inventory Template
+        </button>
+      </span>
+    </div>
+    <div class="search-container">
+      <button class="btn btn-search" (click)="toggleSearch()">
+        <i class="fas fa-search"></i>
+      </button>
+      <div class="search-dropdown" [class.show]="showSearch">
+        <div class="search-group">
+          
+          <select class="search-select" [(ngModel)]="searchType" (change)="onSearchInput()">
+            <option value="client">Search by Client</option>
+            <option value="barcode">Search by Barcode</option>
+          </select>
+          <div class="position-relative">
+            <input 
+              *ngIf="searchType === 'client'"
+              type="text" 
+              class="search-input" 
+              [(ngModel)]="searchClientName" 
+              (input)="onSearchInput()"
+              placeholder="Enter client name..."
+            >
+            <input 
+              *ngIf="searchType === 'barcode'"
+              type="text" 
+              class="search-input" 
+              [(ngModel)]="searchBarcode" 
+              (input)="onSearchInput()"
+              placeholder="Enter barcode..."
+            >
+            <button 
+              *ngIf="searchClientName || searchBarcode"
+              class="clear-search" 
+              (click)="clearSearch()"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="row">
+    <div class="col-12" *ngIf="!filteredProducts || filteredProducts.length === 0">
+      <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle me-2"></i>
+        No products found. Please add products or check your filters.
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-4" *ngFor="let product of paginatedProducts">
+      <div class="card h-100">
+        <div class="card-img-container">
+          <span *hasRole="'SUPERVISOR'">
+            <button class="btn btn-primary btn-ripple btn-sm" (click)="openEditProductModal(product)">
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+          </span>
+          <div class="image-wrapper">
+            <img *ngIf="product.imageUrl" 
+                 [src]="getImageUrl(product)" 
+                 class="card-img-top" 
+                 [alt]="product.name"
+                 (error)="handleImageError($event)">
+            <div class="icon-fallback" *ngIf="!product.imageUrl || isImageError(product)">
+              <i class="fas fa-image fa-4x"></i>
+              <div class="no-image-text">No Image</div>
+            </div>
+          </div>
+          <span class="quantity-badge" [ngClass]="{
+            'low': (product.quantity ?? 0) < 10,
+            'medium': (product.quantity ?? 0) >= 10 && (product.quantity ?? 0) < 50,
+            'high': (product.quantity ?? 0) >= 50,
+            'not-present': product.quantity === undefined || product.quantity === null
+          }">
+            Qty: {{ product.quantity !== undefined && product.quantity !== null ? product.quantity : 'Not Present' }}
+          </span>
+        </div>
+        <div class="card-body p-2 pb-1">
+          <div class="card-header-row">
+            <h5 class="card-title mb-1">{{ product.name }}</h5>
+          </div>
+          <div class="info-box mb-1">
+            <i class="fas fa-building"></i>
+            <span>{{ product.clientName }}</span>
+          </div>
+          <div class="info-box mb-1">
+            <i class="fas fa-barcode"></i>
+            <span>{{ product.barcode }}</span>
+          </div>
+          <div class="info-box mb-0">
+            <i class="fas fa-tag"></i>
+            <span>{{ product.mrp }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-container" *ngIf="totalPages > 1">
+    <nav aria-label="Product pagination">
+      <ul class="pagination justify-content-center">
+        <!-- First Page -->
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="onPageChange(1)" [class.disabled]="currentPage === 1">
+            <i class="fas fa-angle-double-left"></i>
+          </a>
+        </li>
+        
+        <!-- Previous Page -->
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="onPageChange(currentPage - 1)" [class.disabled]="currentPage === 1">
+            <i class="fas fa-angle-left"></i>
+          </a>
+        </li>
+
+        <!-- Page Numbers -->
+        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" 
+            [class.active]="currentPage === i + 1">
+          <a class="page-link" (click)="onPageChange(i + 1)">{{ i + 1 }}</a>
+        </li>
+
+        <!-- Next Page -->
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="onPageChange(currentPage + 1)" [class.disabled]="currentPage === totalPages">
+            <i class="fas fa-angle-right"></i>
+          </a>
+        </li>
+
+        <!-- Last Page -->
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="onPageChange(totalPages)" [class.disabled]="currentPage === totalPages">
+            <i class="fas fa-angle-double-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+  <!-- TSV Preview Modal -->
+  <div class="custom-modal" *ngIf="showTsvPreviewModal" [class.show]="showTsvPreviewModal">
+    <div class="custom-modal-dialog">
+      <div class="custom-modal-content">
+        <div class="custom-modal-header">
+          <h5 class="modal-title">TSV Preview</h5>
+          <button type="button" class="close-button" (click)="closeModals()">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th *ngFor="let header of tsvHeaders">{{ header }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of tsvPreviewData">
+                  <td *ngFor="let cell of row">{{ cell }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-secondary btn-ripple" (click)="closeModals()">Cancel</button>
+          <button type="button" class="btn btn-success btn-ripple" (click)="importTsvData()">Import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Product Modal -->
+  <div class="custom-modal" *ngIf="showAddProductModal" [class.show]="showAddProductModal">
+    <div class="custom-modal-dialog">
+      <div class="custom-modal-content">
+        <div class="custom-modal-header">
+          <h5 class="modal-title">Add Product</h5>
+          <button type="button" class="close-button" (click)="closeModals()">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+          <form (ngSubmit)="addProduct()">
+            <div class="form-group">
+              <label for="clientName">Client</label>
+              <ng-select
+                id="clientName"
+                name="clientName"
+                [items]="clients"
+                bindLabel="clientName"
+                bindValue="id"
+                placeholder="Select a client"
+                [(ngModel)]="newProduct.clientName"
+                required
+                #clientSelect="ngModel">
+              </ng-select>
+              <div class="text-danger" *ngIf="clientSelect.invalid && (clientSelect.dirty || clientSelect.touched)">
+                Please select a client
+              </div>
+              <div class="alert alert-warning mt-2" *ngIf="!clients || clients.length === 0">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                No clients found. Please add clients first.
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="productName">Product Name</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="productName" 
+                     [(ngModel)]="newProduct.name" 
+                     name="productName" 
+                     required
+                     maxlength="50"
+                     #productNameInput="ngModel"
+                     [class.is-invalid]="productNameInput.invalid && (productNameInput.dirty || productNameInput.touched)">
+              <div class="invalid-feedback" *ngIf="productNameInput.errors?.['required']">
+                Product name is required
+              </div>
+              <div class="invalid-feedback" *ngIf="productNameInput.errors?.['maxlength']">
+                Product name cannot exceed 50 characters
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="barcode">Barcode</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="barcode" 
+                     [(ngModel)]="newProduct.barcode" 
+                     name="barcode" 
+                     required
+                     maxlength="20"
+                     #barcodeInput="ngModel"
+                     [class.is-invalid]="barcodeInput.invalid && (barcodeInput.dirty || barcodeInput.touched)">
+              <div class="invalid-feedback" *ngIf="barcodeInput.errors?.['required']">
+                Barcode is required
+              </div>
+              <div class="invalid-feedback" *ngIf="barcodeInput.errors?.['maxlength']">
+                Barcode cannot exceed 20 characters
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="mrp">MRP</label>
+              <input type="number" class="form-control" id="mrp" [(ngModel)]="newProduct.mrp" name="mrp" required>
+            </div>
+            <div class="form-group">
+              <label for="imageUrl">Image URL</label>
+              <input type="text" class="form-control" id="imageUrl" [(ngModel)]="newProduct.imageUrl" name="imageUrl" placeholder="https://example.com/image.jpg">
+            </div>
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
+            <div class="custom-modal-footer">
+              <button type="button" class="btn btn-secondary btn-ripple" (click)="closeModals()">Cancel</button>
+              <button type="submit" class="btn btn-success btn-ripple">Add Product</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Product Modal -->
+  <div class="custom-modal" *ngIf="showEditProductModal" [class.show]="showEditProductModal">
+    <div class="custom-modal-dialog">
+      <div class="custom-modal-content">
+        <div class="custom-modal-header">
+          <h5 class="modal-title">Edit Product</h5>
+          <button type="button" class="close-button" (click)="closeModals()">&times;</button>
+        </div>
+        <div class="custom-modal-body">
+          <form #editProductForm="ngForm" (ngSubmit)="updateProduct()">
+            <div class="form-group">
+              <label for="editClientName">Client</label>
+              <input type="text" class="form-control" id="editClientName" [(ngModel)]="editProduct.clientName" name="clientName" disabled required>
+            </div>
+            <div class="form-group">
+              <label for="editProductName">Product Name</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="editProductName" 
+                     [(ngModel)]="editProduct.name" 
+                     name="productName" 
+                     required
+                     maxlength="50"
+                     #editProductNameInput="ngModel"
+                     [class.is-invalid]="editProductNameInput.invalid && (editProductNameInput.dirty || editProductNameInput.touched)">
+              <div class="invalid-feedback" *ngIf="editProductNameInput.errors?.['required']">
+                Product name is required
+              </div>
+              <div class="invalid-feedback" *ngIf="editProductNameInput.errors?.['maxlength']">
+                Product name cannot exceed 50 characters
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="editBarcode">Barcode</label>
+              <input type="text" 
+                     class="form-control" 
+                     id="editBarcode" 
+                     [(ngModel)]="editProduct.barcode" 
+                     name="barcode" 
+                     disabled 
+                     required
+                     maxlength="20"
+                     #editBarcodeInput="ngModel"
+                     [class.is-invalid]="editBarcodeInput.invalid && (editBarcodeInput.dirty || editBarcodeInput.touched)">
+              <div class="invalid-feedback" *ngIf="editBarcodeInput.errors?.['required']">
+                Barcode is required
+              </div>
+              <div class="invalid-feedback" *ngIf="editBarcodeInput.errors?.['maxlength']">
+                Barcode cannot exceed 20 characters
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="editMrp">MRP</label>
+              <input type="number" class="form-control" id="editMrp" [(ngModel)]="editProduct.mrp" name="mrp" required>
+            </div>
+            <div class="form-group">
+              <label for="editImageUrl">Image URL</label>
+              <input type="text" class="form-control" id="editImageUrl" [(ngModel)]="editProduct.imageUrl" name="imageUrl">
+            </div>
+            <div class="form-group">
+              <label for="editQuantity">Quantity</label>
+              <input type="number" class="form-control" id="editQuantity" [(ngModel)]="editQuantity" name="quantity" required>
+            </div>
+            <div class="custom-modal-footer">
+              <button type="button" class="btn btn-secondary btn-ripple" (click)="closeModals()">Cancel</button>
+              <button type="submit" class="btn btn-success btn-ripple" [disabled]="!editProductForm.form.valid">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Import Failure Modal -->
+<div class="custom-modal" *ngIf="showImportFailureModal" [class.show]="showImportFailureModal">
+  <div class="custom-modal-dialog">
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <h5 class="modal-title">Import Failures</h5>
+        <button type="button" class="close-button" (click)="closeImportFailureModal()">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="alert alert-warning">
+          <p>The following products failed to import:</p>
+        </div>
+        <div *ngIf="importFailures.length === 0" class="alert alert-info">
+          <p>No failures to display.</p>
+        </div>
+        <table class="table table-striped" *ngIf="importFailures.length > 0">
+          <thead>
+            <tr>
+              <th>#</th>
+              
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let failure of importFailures; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ failure.message || 'Unknown error' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-secondary btn-ripple" (click)="closeImportFailureModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="custom-modal" *ngIf="showInventoryTsvPreviewModal" [class.show]="showInventoryTsvPreviewModal">
+  <div class="custom-modal-dialog">
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <h5 class="modal-title">Inventory TSV Preview</h5>
+        <button type="button" class="close-button" (click)="closeInventoryModals()">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th *ngFor="let header of inventoryTsvHeaders">{{ header }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of inventoryTsvPreviewData">
+                <td *ngFor="let cell of row">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-secondary btn-ripple" (click)="closeInventoryModals()">Cancel</button>
+        <button type="button" class="btn btn-success btn-ripple" (click)="importInventoryTsvData()">Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inventory Import Failure Modal -->
+<div class="custom-modal" *ngIf="showInventoryImportFailureModal" [class.show]="showInventoryImportFailureModal">
+  <div class="custom-modal-dialog">
+    <div class="custom-modal-content">
+      <div class="custom-modal-header">
+        <h5 class="modal-title">Inventory Import Failures</h5>
+        <button type="button" class="close-button" (click)="closeInventoryModals()">&times;</button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="alert alert-warning">
+          <strong>Warning:</strong> Some inventory items failed to import. Please review the errors below.
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Product Barcode</th>
+                <th>Error Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let failure of inventoryImportFailures; let i = index">
+                <td>{{i + 1}}</td>
+                <td>{{failure.data.productBarcode}}</td>
+                <td class="text-danger">{{failure.message}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-secondary btn-ripple" (click)="closeInventoryModals()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Hidden file input for TSV upload -->
+  <input type="file" id="fileInput" style="display: none" accept=".tsv" (change)="onFileSelected($event)">
+  
+  <!-- Hidden file input for Inventory TSV upload -->
+  <input type="file" id="inventoryFileInput" style="display: none" (change)="onInventoryFileSelected($event)" accept=".tsv,.txt">
+  
+   <!-- Modal Backdrop -->
+   <div class="custom-modal-backdrop" *ngIf="showModalBackdrop" [class.show]="showModalBackdrop"></div>
+  <!-- Inventory TSV Preview Modal -->
+ 
+  

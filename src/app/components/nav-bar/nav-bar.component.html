@@ -1,0 +1,59 @@
+<div class="d-flex" style="min-height: 100vh;">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h4>POS System</h4>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item" >
+        <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/clients" routerLinkActive="active">
+          <i class="fas fa-users"></i>
+          <span>Clients</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/products" routerLinkActive="active">
+          <i class="fas fa-box"></i>
+          <span>Products</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/orders" routerLinkActive="active">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Orders</span>
+        </a>
+      </li>
+      <li class="nav-item" *hasRole="'SUPERVISOR'">
+        <a class="nav-link" routerLink="/sales-report" routerLinkActive="active">
+          <i class="fas fa-file-invoice-dollar"></i>
+          <span>Sales Report</span>
+        </a>
+      </li>
+      <li class="nav-item" *hasRole="'SUPERVISOR'">
+        <a class="nav-link" routerLink="/daily-report" routerLinkActive="active">
+          <i class="fas fa-calendar-day"></i>
+          <span>Daily Report</span>
+        </a>
+      </li>
+     
+     
+    </ul>
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
