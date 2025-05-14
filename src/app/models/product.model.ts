@@ -6,6 +6,10 @@ export interface Product {
   clientName: string;
   imageUrl?: string;
   quantity?: number;
+  client?: {
+    id: number;
+    name: string;
+  };
 }
 
 export interface ProductForm {

@@ -50,7 +50,7 @@ export class OrderPageComponent implements OnInit {
   };
   
   newOrder: Order = {
-    time: 0,
+    time: '',
     status: 'CREATED',
     items: [],
     customerName: '',
@@ -180,7 +180,7 @@ export class OrderPageComponent implements OnInit {
     
     // Reset the form
     this.newOrder = {
-      time: 0,
+      time: '',
       status: 'CREATED',
       items: [],
       customerName: '',
@@ -543,22 +543,29 @@ export class OrderPageComponent implements OnInit {
     });
   }
 
-  changeOrderStatus(order: Order, newStatus: string): void {
-    const orderId = order.orderId || order.id;
-    if (!orderId) {
-        this.showToast('error', 'Order ID is missing', 'Error');
-        return;
+  changeOrderStatus(order: Order, newStatus: 'COMPLETED' | 'CANCELLED'): void {
+    if (order.status === 'COMPLETED' || order.status === 'CANCELLED') {
+      this.toastr.warning('Cannot change status of a completed or cancelled order');
+      return;
     }
 
-    this.orderService.updateOrderStatus(orderId, newStatus).subscribe({
-        next: () => {
-            this.showToast('success', 'Order status updated successfully', 'Success');
-            this.loadOrders(); // Reload orders to reflect the change
-        },
-        error: (error: any) => {
-            this.showToast('error', 'Failed to update order status', 'Error');
-            console.error('Error updating order status:', error);
+    const loadingToast = this.toastr.info('Updating order status...', 'Please wait', { timeOut: 0 });
+
+    this.orderService.updateOrderStatus(order.id!, newStatus).subscribe({
+      next: () => {
+        if (loadingToast?.toastId) {
+          this.toastr.clear(loadingToast.toastId);
         }
+        this.toastr.success(`Order ${newStatus.toLowerCase()} successfully`);
+        this.loadOrders();
+      },
+      error: (error) => {
+        if (loadingToast?.toastId) {
+          this.toastr.clear(loadingToast.toastId);
+        }
+        this.toastr.error('Failed to update order status');
+        console.error('Error updating order status:', error);
+      }
     });
   }
 

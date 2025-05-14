@@ -1,8 +1,8 @@
 export interface Order {
     id?: number;
     orderId?: number;
-    time?: number;
-    status: 'CREATED' | 'COMPLETED' ;
+    time?: string;
+    status: 'CREATED' | 'COMPLETED' | 'CANCELLED';
     items: OrderItem[];
     customerName: string;
     customerContact: string;

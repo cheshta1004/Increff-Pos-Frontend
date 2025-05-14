@@ -11,6 +11,8 @@ import { Client } from '../../client.model';
 import { ToastrService } from 'ngx-toastr';
 import { HasRoleDirective } from '../../directives/has-role.directive';
 import { PaginatedResponse } from '../../models/paginated-response.model';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 interface ImportResponse {
   failureList?: Array<{
@@ -35,7 +37,7 @@ export class ProductPageComponent implements OnInit {
   clients: any[] = [];
   searchClientName: string = '';
   searchBarcode: string = '';
-  searchType: 'client' | 'barcode' = 'client';
+  searchType: 'barcode' | 'client' = 'client';
   showSearch: boolean = false;
   private searchTimeout: any;
   selectedClient: number | null = null; // Change to number type for client ID
@@ -87,6 +89,8 @@ export class ProductPageComponent implements OnInit {
   totalItems: number = 0;
   totalPages: number = 0;
   paginatedProducts: Product[] = [];
+  searchQuery: string = '';
+  private searchSubject = new Subject<string>();
 
   constructor(
     private productService: ProductService,
@@ -94,7 +98,15 @@ export class ProductPageComponent implements OnInit {
     private clientService: ClientService,
     private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) {
+    // Set up debounced search
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(query => {
+      this.search();
+    });
+  }
 
   ngOnInit(): void {
     this.getAllProducts();
@@ -322,6 +334,7 @@ export class ProductPageComponent implements OnInit {
     console.log('Search results:', products);
     this.products = products.map(p => ({ ...p, quantity: undefined }));
     this.filteredProducts = [...this.products];
+    this.paginatedProducts = [...this.products]; // Update paginated products immediately
     
     // For each product, fetch the inventory quantity
     this.products.forEach((product, index) => {
@@ -339,6 +352,8 @@ export class ProductPageComponent implements OnInit {
             if (paginatedProductToUpdate) {
               paginatedProductToUpdate.quantity = res.quantity;
             }
+            // Force UI update
+            this.paginatedProducts = [...this.paginatedProducts];
           }
         },
         error: (error: any) => {
@@ -354,6 +369,8 @@ export class ProductPageComponent implements OnInit {
             if (paginatedProductToUpdate) {
               paginatedProductToUpdate.quantity = undefined;
             }
+            // Force UI update
+            this.paginatedProducts = [...this.paginatedProducts];
           } else {
             console.error(`Error fetching quantity for ${product.barcode}:`, error);
             this.products[index].quantity = undefined;
@@ -366,6 +383,8 @@ export class ProductPageComponent implements OnInit {
             if (paginatedProductToUpdate) {
               paginatedProductToUpdate.quantity = undefined;
             }
+            // Force UI update
+            this.paginatedProducts = [...this.paginatedProducts];
           }
         }
       });
@@ -373,18 +392,60 @@ export class ProductPageComponent implements OnInit {
   }
 
   onSearchInput(): void {
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
+    this.searchSubject.next(this.searchQuery);
+  }
+
+  search(): void {
+    if (!this.searchQuery.trim()) {
+      this.getAllProducts();
+      return;
     }
-    this.searchTimeout = setTimeout(() => {
-      this.filterProducts();
-    }, 300);
+
+    switch (this.searchType) {
+      case 'barcode':
+        this.productService.getProductsByPartialBarcode(this.searchQuery.trim(), this.currentPage - 1, this.itemsPerPage)
+          .subscribe({
+            next: (response: PaginatedResponse<Product>) => {
+              this.handleSearchResults(response.content);
+              this.totalItems = response.totalItems;
+              this.totalPages = response.totalPages;
+              this.itemsPerPage = response.pageSize;
+            },
+            error: (error: any) => {
+              console.error('Error searching products by barcode:', error);
+              this.toastr.error('Failed to search products', 'Error');
+              this.getAllProducts();
+            }
+          });
+        break;
+
+      case 'client':
+        this.productService.getProductsByClientName(this.searchQuery.trim(), this.currentPage - 1, this.itemsPerPage)
+          .subscribe({
+            next: (response: PaginatedResponse<Product>) => {
+              this.handleSearchResults(response.content);
+              this.totalItems = response.totalItems;
+              this.totalPages = response.totalPages;
+              this.itemsPerPage = response.pageSize;
+            },
+            error: (error: any) => {
+              console.error('Error searching products by client:', error);
+              this.toastr.error('Failed to search products', 'Error');
+              this.getAllProducts();
+            }
+          });
+        break;
+    }
+  }
+
+  setSearchType(type: 'barcode' | 'client'): void {
+    this.searchType = type;
+    this.searchQuery = '';
+    this.getAllProducts();
   }
 
   clearSearch(): void {
-    this.searchClientName = '';
-    this.searchBarcode = '';
-    this.currentPage = 1;
+    this.searchQuery = '';
     this.getAllProducts();
   }
 
@@ -442,6 +503,14 @@ export class ProductPageComponent implements OnInit {
     if (this.newProduct.mrp < 0) {
       this.errorMessage = 'MRP cannot be negative';
       this.toastr.error('MRP cannot be negative', 'Validation Error');
+      return;
+    }
+
+    // Validate decimal places for MRP
+    const decimalPlaces = (this.newProduct.mrp.toString().split('.')[1] || '').length;
+    if (decimalPlaces > 2) {
+      this.errorMessage = 'MRP must have at most 2 decimal places';
+      this.toastr.error('MRP must have at most 2 decimal places', 'Validation Error');
       return;
     }
 
@@ -546,7 +615,7 @@ export class ProductPageComponent implements OnInit {
         // Try to update inventory first
         this.inventoryService.updateInventory(this.editProduct.barcode, this.editQuantity).subscribe({
           next: () => {
-            this.toastr.success('Product and inventory updated successfully', 'Success');
+    
             this.getAllProducts();
             this.closeModals();
           },
@@ -560,7 +629,6 @@ export class ProductPageComponent implements OnInit {
               
               this.inventoryService.addInventory(inventoryForm).subscribe({
                 next: () => {
-                  this.toastr.success('Product and inventory added successfully', 'Success');
                   this.getAllProducts();
                   this.closeModals();
                 },
@@ -697,107 +765,66 @@ export class ProductPageComponent implements OnInit {
         return null;
       }
 
-      // Parse and validate MRP
-      let mrp: number;
-      if (mrpStr) {
-        const cleanValue = mrpStr.replace(/[^\d.-]/g, '');
-        const parsedValue = parseFloat(cleanValue);
-        if (!isNaN(parsedValue)) {
-          if (parsedValue <= 0) {
-            this.toastr.error(`MRP must be greater than 0 for product ${name} (${barcode})`, 'Validation Error');
-            return null;
-          }
-          mrp = parsedValue;
-        } else {
-          this.toastr.error(`Invalid MRP value "${mrpStr}" for product ${name} (${barcode})`, 'Validation Error');
-          return null;
-        }
-      } else {
-        this.toastr.error(`MRP is required for product ${name} (${barcode})`, 'Validation Error');
+      // Validate MRP
+      if (mrpStr === null || mrpStr === undefined) {
+        this.toastr.error(`MRP must not be null for product ${name}`, 'Validation Error');
         return null;
       }
-      
-      // Handle image URL - provide default if missing
-      const finalImageUrl = imageUrl || 'https://www.google.com/imgres?q=default%20image&imgurl=https%3A%2F%2Fjkfenner.com%2Fwp-content%2Fuploads%2F2019%2F11%2Fdefault.jpg&imgrefurl=https%3A%2F%2Fjkfenner.com%2Fadvanced-technology-solutions%2Fdefault-2%2F&docid=LKHPXKlnHGdX_M&tbnid=DdfLEcyVOY0y3M&vet=12ahUKEwj3yaX56uqMAxXmyzgGHVBPANkQM3oECBgQAA..i&w=600&h=600&hcb=2&ved=2ahUKEwj3yaX56uqMAxXmyzgGHVBPANkQM3oECBgQAA';
-      
-      if (finalImageUrl.length > 1000) {
-        this.toastr.error(`Image URL for product ${name} (${barcode}) exceeds 1000 characters`, 'Validation Error');
+      const mrp = parseFloat(mrpStr);
+      if (isNaN(mrp) || mrp < 0) {
+        this.toastr.error(`Invalid MRP for product ${name}`, 'Validation Error');
         return null;
       }
-      
-      // Log the processed data for debugging
-      console.log(`Processing: ${barcode} ${name} ${mrp} ${clientName} ${finalImageUrl}`);
-      
-      // Return the product form object
+
+      // Validate image URL
+      if (imageUrl && imageUrl.length > 1000) {
+        this.toastr.error(`Image URL must not exceed 1000 characters for product ${name}`, 'Validation Error');
+        return null;
+      }
+
       return {
         barcode,
         name,
         mrp,
         clientName,
-        imageUrl: finalImageUrl
-      } as ProductForm;
-    }).filter((product): product is ProductForm => product !== null);
+        imageUrl
+      };
+    });
 
-    // If no valid products, show an error message
-    if (products.length === 0) {
-      this.errorMessage = 'No valid products to import. Please check your TSV data.';
+    const validProducts = products.filter((product): product is ProductForm => product !== null);
+
+    if (validProducts.length === 0) {
+      this.toastr.error('No valid products found in the TSV file', 'Validation Error');
       return;
     }
 
-    // Show loading state
-    this.errorMessage = 'Importing products...';
-
-    this.productService.importProducts(products).subscribe({
-      next: (response) => {
-        console.log('Products imported successfully:', response);
-        
-        // Debug the response structure
-        console.log('Response type:', typeof response);
-        console.log('Response keys:', Object.keys(response));
-        console.log('Has failureList:', response && 'failureList' in response);
-        console.log('FailureList length:', response && response.failureList ? response.failureList.length : 0);
-        
-        // Check if there were any failures
-        if (response && response.failureList && response.failureList.length > 0) {
-          // Create a formatted message with the failure details
-          let failureMessage = `Import completed with ${response.failureList.length} failures:\n`;
-          response.failureList.forEach((failure: any, index: number) => {
-            failureMessage += `${index + 1}. ${failure.data.barcode || 'Unknown'}: ${failure.message || 'Unknown error'}\n`;
-          });
-          
-          this.errorMessage = failureMessage;
-          console.error('Import failures:', response.failureList);
-          
-          // Show the failure list in a modal
+    this.productService.importProducts(validProducts).subscribe({
+      next: (response: any) => {
+        if (response.failureList && response.failureList.length > 0) {
+          this.importFailures = response.failureList.map((failure: any) => ({
+            data: { productBarcode: failure.data.barcode },
+            message: failure.message
+          }));
           this.showImportFailureModal = true;
-          this.importFailures = response.failureList;
-          
-          // Make sure the modal backdrop is shown
           this.showModalBackdrop = true;
-          
-          // Show success count if there were any successful imports
-          if (response.successList && response.successList.length > 0) {
-            this.toastr.success(`${response.successList.length} products imported successfully`, 'Partial Success');
-          }
-          
-          // Show failure count
-          this.toastr.warning(`${response.failureList.length} products failed to import`, 'Import Warning');
         } else {
-          // All successful
-          this.toastr.success('All products imported successfully', 'Import Success');
+          this.getAllProducts();
+          this.closeModals();
+          this.toastr.success('Products imported successfully', 'Success');
         }
-        
-        // Close the TSV preview modal
-        this.showTsvPreviewModal = false;
-        
-        // Refresh the product list regardless of success or failure
-        this.getAllProducts();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error importing products:', error);
-        if (error.error && error.error.message) {
-          this.errorMessage = `Failed to import products: ${error.error.message}`;
-          this.toastr.error(this.errorMessage, 'Import Error');
+        if (error.error && error.error.failureList) {
+          this.importFailures = error.error.failureList.map((failure: any) => ({
+            data: { productBarcode: failure.data.barcode },
+            message: failure.message
+          }));
+          this.showImportFailureModal = true;
+          this.showModalBackdrop = true;
+        } else {
+          this.errorMessage = error.message || 'Failed to import products. Please try again.';
+          this.toastr.error(this.errorMessage, 'Error');
         }
       }
     });
@@ -815,39 +842,48 @@ export class ProductPageComponent implements OnInit {
   }
 
   onPageChange(page: number): void {
-    console.log('Changing to page:', page);
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.getAllProducts();  // This will fetch the correct page from the server
+      this.getAllProducts();
     }
+  }
+
+  closeImportFailureModal(): void {
+    this.showImportFailureModal = false;
+    this.showModalBackdrop = false;
+    this.importFailures = [];
   }
 
   importInventoryTsvData(): void {
     const inventoryData = this.inventoryTsvPreviewData.map(row => {
       const [productBarcode, quantity] = row;
+      const parsedQuantity = parseInt(quantity.trim(), 10);
+      
+      if (isNaN(parsedQuantity) || parsedQuantity < 0) {
+        return null;
+      }
+      
       return {
         productBarcode: productBarcode.trim(),
-        quantity: parseInt(quantity.trim(), 10)
+        quantity: parsedQuantity
       };
-    });
+    }).filter((item): item is { productBarcode: string; quantity: number } => item !== null);
+
+    if (inventoryData.length === 0) {
+      this.toastr.error('No valid inventory items to import', 'Validation Error');
+      return;
+    }
 
     this.inventoryService.addInventoryList(inventoryData).subscribe({
-      next: (response: BulkInventoryData) => {
-        if (response && response.failureList && response.failureList.length > 0) {
-          this.inventoryImportFailures = response.failureList;
-          this.showInventoryImportFailureModal = true;
-          this.showInventoryTsvPreviewModal = false;
-          this.toastr.warning(`${response.failureList.length} items failed to import`, 'Import Warning');
-        } else {
-          this.toastr.success('All inventory items imported successfully', 'Success');
-          this.closeInventoryModals();
-          this.getAllProducts(); // Refresh the product list to show updated quantities
-        }
+      next: () => {
+        this.toastr.success('Inventory imported successfully', 'Success');
+        this.closeInventoryModals();
+        this.getAllProducts();
       },
-      error: (error: { error?: { message: string } }) => {
+      error: (error: any) => {
         console.error('Error importing inventory:', error);
-        this.errorMessage = error.error?.message || 'Failed to import inventory. Please try again.';
-        this.toastr.error(this.errorMessage, 'Import Error');
+        this.errorMessage = error.message || 'Failed to import inventory. Please try again.';
+        this.toastr.error(this.errorMessage, 'Error');
       }
     });
   }
@@ -864,13 +900,23 @@ export class ProductPageComponent implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
-  toggleSearch(): void {
-    this.showSearch = !this.showSearch;
-    if (!this.showSearch) {
-      this.searchClientName = '';
-      this.searchBarcode = '';
-      this.getAllProducts();
+  downloadProductTemplate(): void {
+    const headers = ['Barcode', 'Name', 'MRP', 'Client Name', 'Image URL'];
+    const template = headers.join('\t') + '\n';
+    const blob = new Blob([template], { type: 'text/tab-separated-values' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'product_template.tsv';
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  getImageUrl(product: Product): string {
+    if (!product.imageUrl || !this.validateImageUrl(product.imageUrl)) {
+      return 'assets/images/no-image.png'; // Default fallback image
     }
+    return product.imageUrl;
   }
 
   handleImageError(event: Event): void {
@@ -895,30 +941,5 @@ export class ProductPageComponent implements OnInit {
     } catch {
       return false;
     }
-  }
-
-  getImageUrl(product: Product): string {
-    if (!product.imageUrl || !this.validateImageUrl(product.imageUrl)) {
-      return 'assets/images/no-image.png'; // Default fallback image
-    }
-    return product.imageUrl;
-  }
-
-  downloadProductTemplate(): void {
-    const headers = ['Barcode', 'Name', 'MRP', 'Client Name', 'Image URL'];
-    const template = headers.join('\t') + '\n';
-    const blob = new Blob([template], { type: 'text/tab-separated-values' });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'product_template.tsv';
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  closeImportFailureModal(): void {
-    this.showImportFailureModal = false;
-    this.showModalBackdrop = false;
-    this.importFailures = [];
   }
 }

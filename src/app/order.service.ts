@@ -77,7 +77,7 @@ export class OrderService {
         );
     }
 
-    updateOrderStatus(orderId: number, status: string): Observable<any> {
-        return this.http.put(`${this.apiUrl}/update-status/${orderId}/${status}`, null);
+    updateOrderStatus(orderId: number, status: 'COMPLETED' | 'CANCELLED'): Observable<any> {
+        return this.http.put(`${this.apiUrl}/update-status/${orderId}/${status}`, {});
     }
 }

@@ -1,71 +1,50 @@
 <div class="container">
-  <h2>Products</h2>
-  
+ 
   <div class="d-flex justify-content-between mb-3">
+    <div class="search-container">
+      <div class="search-dropdown">
+        <div class="search-type-selector">
+          <button class="search-type-btn" [class.active]="searchType === 'barcode'" (click)="setSearchType('barcode')">
+            <i class="fas fa-barcode"></i>
+          </button>
+          <button class="search-type-btn" [class.active]="searchType === 'client'" (click)="setSearchType('client')">
+            <i class="fas fa-user"></i>
+          </button>
+        </div>
+        <input
+          type="text"
+          class="search-input"
+          [placeholder]="'Search by ' + searchType"
+          [(ngModel)]="searchQuery"
+          (input)="onSearchInput()"
+          (keyup.enter)="search()"
+        >
+        <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
     <div class="d-flex align-items-center gap-3">
       <span *hasRole="'SUPERVISOR'">
         <button class="btn btn-primary btn-ripple" (click)="openAddProductModal()">
           <i class="fas fa-plus"></i> Add Product
         </button>
       </span>
-      <span *hasRole="'SUPERVISOR'">
+      <div class="btn-group" *hasRole="'SUPERVISOR'">
         <button class="btn btn-secondary btn-ripple" (click)="triggerFileInput()">
           <i class="fas fa-file-import"></i> Import Product TSV
         </button>
-      </span>
-      <span *hasRole="'SUPERVISOR'">
         <button class="btn btn-outline-secondary btn-ripple" (click)="downloadProductTemplate()">
-          <i class="fas fa-download"></i> Download Product Template
+          <i class="fas fa-download"></i> 
         </button>
-      </span>
-      <span *hasRole="'SUPERVISOR'">
+      </div>
+      <div class="btn-group" *hasRole="'SUPERVISOR'">
         <button class="btn btn-info btn-ripple" (click)="triggerInventoryFileInput()">
           <i class="fas fa-boxes"></i> Import Inventory TSV
         </button>
-      </span>
-      <span *hasRole="'SUPERVISOR'">
-        <button class="btn btn-outline-secondary btn-ripple" (click)="downloadInventoryTemplate()">
-          <i class="fas fa-download"></i> Download Inventory Template
+        <button class="btn btn-outline-info btn-ripple" (click)="downloadInventoryTemplate()">
+          <i class="fas fa-download"></i> 
         </button>
-      </span>
-    </div>
-    <div class="search-container">
-      <button class="btn btn-search" (click)="toggleSearch()">
-        <i class="fas fa-search"></i>
-      </button>
-      <div class="search-dropdown" [class.show]="showSearch">
-        <div class="search-group">
-          
-          <select class="search-select" [(ngModel)]="searchType" (change)="onSearchInput()">
-            <option value="client">Search by Client</option>
-            <option value="barcode">Search by Barcode</option>
-          </select>
-          <div class="position-relative">
-            <input 
-              *ngIf="searchType === 'client'"
-              type="text" 
-              class="search-input" 
-              [(ngModel)]="searchClientName" 
-              (input)="onSearchInput()"
-              placeholder="Enter client name..."
-            >
-            <input 
-              *ngIf="searchType === 'barcode'"
-              type="text" 
-              class="search-input" 
-              [(ngModel)]="searchBarcode" 
-              (input)="onSearchInput()"
-              placeholder="Enter barcode..."
-            >
-            <button 
-              *ngIf="searchClientName || searchBarcode"
-              class="clear-search" 
-              (click)="clearSearch()"
-            >
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>

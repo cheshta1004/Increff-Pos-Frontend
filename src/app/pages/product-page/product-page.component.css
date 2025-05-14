@@ -71,6 +71,12 @@ h2 {
   color: #3498db;
   border: 1px solid #3498db;
   background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-outline-primary:hover {
@@ -78,6 +84,19 @@ h2 {
   background-color: #3498db;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-primary:focus {
+  color: white;
+  background-color: #3498db;
+  border-color: #3498db;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.btn-outline-primary:active {
+  color: white;
+  background-color: #2980b9;
+  border-color: #2980b9;
 }
 
 .me-1 {
@@ -308,6 +327,9 @@ h2 {
   height: 200px;
   overflow: hidden;
   background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Edit Button Styling */
@@ -337,9 +359,11 @@ h2 {
 .card-img-top {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   background-color: #f8f9fa;
+  padding: 1rem;
   transition: all 0.3s ease;
+  margin: 0;
 }
 
 /* Quantity Badge Styling */
@@ -464,7 +488,7 @@ h2 {
 
 .btn-info:hover {
   background-color: #138496;
-  border-color: #117a8b;
+  border-color: #138496;
 }
 
 .btn-outline-secondary {
@@ -474,7 +498,7 @@ h2 {
 }
 
 .btn-outline-secondary:hover {
-  color: #fff;
+  color: white;
   background-color: #6c757d;
   border-color: #6c757d;
 }
@@ -949,7 +973,7 @@ body.modal-open {
   background-color: #f8f9fa;
   padding: 1rem;
   transition: all 0.3s ease;
-  margin-right: 0;
+  margin: 0;
 }
 
 .card:hover .card-img-top {
@@ -963,6 +987,9 @@ body.modal-open {
   height: 200px;
   overflow: hidden;
   background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Image hover effect */
@@ -998,6 +1025,7 @@ body.modal-open {
   height: 100%;
   color: #6c757d;
   background-color: #f8f9fa;
+  padding: 0;
 }
 
 .no-image-text {
@@ -1472,7 +1500,7 @@ body.modal-open {
 .col-auto {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.5rem;
 }
 
 /* Add subtle hover effect to all buttons */
@@ -1891,7 +1919,8 @@ label {
   position: relative;
   display: flex;
   align-items: center;
-  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  min-width: 300px;
 }
 
 /* Search Button Styles */
@@ -1933,105 +1962,98 @@ label {
 
 /* Search Dropdown Styles */
 .search-dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 300px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
-  padding: 15px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.search-dropdown.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Search Group Styles */
-.search-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   position: relative;
-}
-
-.search-select {
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  color: #2c3e50;
-  background-color: #f8f9fa;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233498db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
-  padding-right: 35px;
-}
-
-.search-select:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-  outline: none;
-}
-
-.search-select option {
-  padding: 8px;
-  background-color: white;
-}
-
-.search-select option:checked {
-  background-color: #e8f4fc;
-  color: #3498db;
-  font-weight: 500;
-}
-
-.search-input {
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  color: #2c3e50;
-  transition: all 0.3s ease;
   width: 100%;
-  padding-right: 35px; /* Make space for the clear button */
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.search-input:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-  outline: none;
+/* Search Type Selector */
+.search-type-selector {
+  display: flex;
+  gap: 4px;
+  align-items: center;
 }
 
-.clear-search {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #95a5a6;
-  padding: 5px;
+.search-type-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  z-index: 2;
-  width: 24px;
-  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+}
+
+.search-type-btn:hover {
+  background: #f8f9fa;
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.search-type-btn.active {
+  background: #3498db;
+  border-color: #3498db;
+  color: white;
+}
+
+.search-type-btn i {
+  font-size: 14px;
+}
+
+/* Search Input Group */
+.search-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Clear Search Button */
+.clear-search {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #95a5a6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
 }
 
 .clear-search:hover {
@@ -2039,55 +2061,126 @@ label {
   background-color: rgba(231, 76, 60, 0.1);
 }
 
-/* Add a subtle backdrop when dropdown is open */
-.search-dropdown::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(2px);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .search-container {
+    min-width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .search-dropdown {
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  .search-type-btn,
+  .clear-search {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .search-input {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
 }
 
-.search-dropdown.show::before {
-  opacity: 1;
+.btn-outline-info {
+  color: #17a2b8;
+  border: 1px solid #17a2b8;
+  background-color: transparent;
+  transition: all 0.3s ease;
 }
 
-/* Ensure the search container aligns with other buttons */
-.d-flex.justify-content-between {
+.btn-outline-info:hover {
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-info:focus {
+  color: #fff;
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+
+.btn-outline-info:active {
+  color: #fff;
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
+/* Remove margin between import and download buttons */
+.btn-outline-info + .btn-outline-info {
+  margin-left: 0 !important;
+}
+
+/* Remove margin for download button */
+.btn-outline-info.download-btn {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Ensure consistent button group spacing */
+.col-auto {
+  display: flex;
   align-items: center;
+  gap: 0.5rem;
 }
 
-/* Add a label to show selected search type */
-.search-type-label {
-  font-size: 0.8rem;
-  color: #95a5a6;
-  margin-bottom: 4px;
-  font-weight: 500;
+/* Override any existing margins for download button */
+[class*="download"] {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
-/* Add active state for selected search type */
-.search-type-label.active {
-  color: #3498db;
-  font-weight: 600;
+/* Button group styling */
+.btn-group {
+  display: flex;
+  align-items: stretch;
+  gap: 0 !important;
+}
+
+.btn-group .btn {
+  margin: 0 !important;
+  border-radius: 0;
+  padding: 0.5rem 1rem;
+  height: 38px; /* Fixed height for all buttons */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.btn-group .btn:first-child {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.btn-group .btn:last-child {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 0.5rem; /* Slightly less padding for download button */
 }
 
 /* Pagination Styles */
 .pagination-container {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .pagination {
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 0.25rem;
+  margin: 0;
+  padding: 0;
 }
 
 .page-item {
@@ -2098,111 +2191,53 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.5rem;
-  height: 2.5rem;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  background: white;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: transparent;
   border: 1px solid #e0e0e0;
-  color: #2c3e50;
-  font-weight: 500;
+  color: #666;
+  font-size: 0.875rem;
+  font-weight: 400;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-decoration: none;
 }
 
 .page-link:hover {
   background: #f8f9fa;
-  border-color: #3498db;
-  color: #3498db;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #ccc;
+  color: #333;
 }
 
 .page-item.active .page-link {
-  background: linear-gradient(135deg, #3498db, #2980b9);
-  border-color: #3498db;
-  color: white;
-  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+  background: #f8f9fa;
+  border-color: #ccc;
+  color: #333;
+  font-weight: 500;
 }
 
 .page-item.disabled .page-link {
-  background: #f8f9fa;
+  background: transparent;
   border-color: #e0e0e0;
-  color: #95a5a6;
+  color: #ccc;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
 .page-link i {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
 }
 
 /* Responsive pagination */
 @media (max-width: 768px) {
   .pagination {
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.25rem;
   }
 
   .page-link {
-    min-width: 2rem;
-    height: 2rem;
-    font-size: 0.875rem;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
   }
-}
-
-.image-wrapper {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.card-img-top {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.icon-fallback {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: #6c757d;
-  background-color: #f8f9fa;
-}
-
-.no-image-text {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #6c757d;
-}
-
-.card:hover .icon-fallback {
-  background-color: #e9ecef;
-  color: #495057;
-  transform: scale(1.05);
-}
-
-.card:hover .no-image-text {
-  color: #495057;
-}
-
-.icon-fallback i {
-  transition: all 0.3s ease;
-}
-
-.card:hover .icon-fallback i {
-  transform: scale(1.1);
-  color: #007bff;
 }

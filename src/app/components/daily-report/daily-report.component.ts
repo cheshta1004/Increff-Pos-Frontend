@@ -30,6 +30,7 @@ export class DailyReportComponent implements OnInit {
 
     this.revenueService.getDailyReport().subscribe({
       next: (data) => {
+        console.log('Raw data from backend:', JSON.stringify(data, null, 2));
         this.dailyData = data;
         this.calculateTotals();
         this.isLoading = false;
@@ -53,11 +54,30 @@ export class DailyReportComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
+    try {
+      if (!dateString) {
+        console.error('Date string is null or undefined');
+        return 'Invalid Date';
+      }
+
+      // Parse the ISO date string
+      const date = new Date(dateString);
+      
+      if (isNaN(date.getTime())) {
+        console.error('Invalid date:', dateString);
+        return 'Invalid Date';
+      }
+
+      // Format the date in Indian locale with timezone
+      return new Intl.DateTimeFormat('en-IN', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric',
+        timeZone: 'Asia/Kolkata'
+      }).format(date);
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
+    }
   }
 } 

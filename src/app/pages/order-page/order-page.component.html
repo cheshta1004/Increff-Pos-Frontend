@@ -1,14 +1,8 @@
 <div class="container">
-    <!-- Header Row -->
-    <div class="row mb-4">
-        <div class="col">
-            <h2>Orders</h2>
-        </div>
-    </div>
-
+   
     <!-- Action Row -->
     <div class="row mb-4" *hasRole="'SUPERVISOR'">
-        <div class="col">
+        <div class="col d-flex justify-content-end">
             <button class="btn btn-primary btn-ripple" (click)="openOrderModal()">
                 <i class="fas fa-plus"></i> Add Order
             </button>
@@ -39,7 +33,7 @@
                                 <span [ngClass]="{
                                     'badge bg-success': order.status === 'COMPLETED',
                                     'badge bg-warning': order.status === 'CREATED',
-                    
+                                    'badge bg-danger cancelled-badge': order.status === 'CANCELLED'
                                 }">
                                     {{ order.status }}
                                 </span>
@@ -47,18 +41,26 @@
                             <td>{{ order.items ? order.items.length : 0 }}</td>
                             <td>₹{{ calculateOrderTotal(order) }}</td>
                             <td>
-                                <button class="btn btn-sm btn-outline-primary" (click)="viewOrderDetails(order)">
+                                <button class="btn btn-sm btn-outline-primary" (click)="viewOrderDetails(order)" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <button class="btn btn-sm btn-outline-success ms-2" 
                                         (click)="generateInvoice(order)"
                                         [disabled]="order.status !== 'COMPLETED'"
-                                        [title]="order.status !== 'COMPLETED' ? 'Complete the order to download invoice' : 'Download Invoice'">
+                                        title="Download Invoice">
                                     <i class="fas fa-file-invoice"></i>
                                 </button>
                                 <button class="btn btn-sm btn-outline-info ms-2" (click)="changeOrderStatus(order, 'COMPLETED')" 
-                                        [disabled]="order.status === 'COMPLETED'">
-                                    <i class="fas fa-check"></i> Complete
+                                        [disabled]="order.status !== 'CREATED'"
+                                        *ngIf="order.status === 'CREATED'"
+                                        title="Complete Order">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger ms-2" (click)="changeOrderStatus(order, 'CANCELLED')"
+                                        [disabled]="order.status !== 'CREATED'"
+                                        *ngIf="order.status === 'CREATED'"
+                                        title="Cancel Order">
+                                    <i class="fas fa-times"></i>
                                 </button>
                             </td>
                         </tr>
@@ -78,7 +80,7 @@
     <!-- Pagination Controls -->
     <div class="pagination-container" *ngIf="totalPages > 1">
       <nav aria-label="Order pagination">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination">
           <!-- First Page -->
           <li class="page-item" [class.disabled]="currentPage === 1">
             <a class="page-link" (click)="onPageChange(1)" [class.disabled]="currentPage === 1">
@@ -290,7 +292,8 @@
                         <p><strong>Status:</strong>
                             <span [ngClass]="{
                                 'badge bg-success': selectedOrder.status === 'COMPLETED',
-                                'badge bg-warning': selectedOrder.status === 'CREATED'
+                                'badge bg-warning': selectedOrder.status === 'CREATED',
+                                'badge bg-danger cancelled-badge': selectedOrder.status === 'CANCELLED'
                             }">
                                 {{ selectedOrder.status }}
                             </span>

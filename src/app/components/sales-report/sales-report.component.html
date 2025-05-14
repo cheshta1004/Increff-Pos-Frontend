@@ -1,12 +1,4 @@
 <div class="sales-report-container">
-  <div class="report-header">
-    <h2>Sales Report</h2>
-    <div class="header-actions">
-      <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
-        <i class="fas" [class.fa-sync-alt]="!isLoading" [class.fa-spinner]="isLoading" [class.fa-spin]="isLoading"></i>
-      </button>
-    </div>
-  </div>
 
   <div class="filters-section">
     <div class="filter-group">
@@ -21,7 +13,10 @@
       <label for="clientName">Client Name:</label>
       <input type="text" id="clientName" [(ngModel)]="filter.clientName" (change)="loadRevenueData()" placeholder="Enter client name">
     </div>
-    <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+    <button class="clear-filters-btn" (click)="clearFilters()">
+        <i class="fas fa-times"></i>
+        Clear Filters
+    </button>
   </div>
 
   <div class="summary-cards">

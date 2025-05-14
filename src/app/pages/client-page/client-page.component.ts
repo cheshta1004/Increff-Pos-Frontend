@@ -35,7 +35,7 @@ export class ClientPageComponent implements OnInit {
 
   // Pagination properties
   currentPage: number = 0;
-  itemsPerPage: number = 10;
+  itemsPerPage = 20; // Increased from default to show more cards per page
   totalPages: number = 0;
   totalItems: number = 0;
 
@@ -126,7 +126,7 @@ export class ClientPageComponent implements OnInit {
       next: () => {
         this.getAllClients();
         this.closeAddClientModal();
-        this.showToast('success', 'Client added successfully');
+    
       },
       error: (error) => {
         console.error('Error adding client:', error);

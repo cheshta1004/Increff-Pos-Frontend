@@ -1,5 +1,4 @@
 <div class="client-page-container">
-    <h2>Clients</h2>
   
     <div class="d-flex justify-content-between mb-3">
       <div *hasRole="'SUPERVISOR'">
@@ -20,28 +19,23 @@
         {{ isSearchActive ? 'No matching clients found.' : 'No client found.' }}
       </div>
     </div>
-    <table class="table table-striped mt-3" *ngIf="clients && clients.length > 0">
-      <thead>
-        <tr>
-          <th>S.No</th>
-          <th>Client Name</th>
-          <th *hasRole="'SUPERVISOR'">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let client of clients; let i = index">
-          <td>{{ (currentPage * itemsPerPage) + i + 1 }}</td>
-          <td>{{ client.clientName }}</td>
-          <td>
-            <span *hasRole="'SUPERVISOR'">
-              <button class="btn btn-sm edit-btn" (click)="openEditClientModal(client)">
-                <i class="fas fa-edit"></i>
-              </button>
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
+    <!-- Client Cards Grid -->
+    <div class="client-grid" *ngIf="clients && clients.length > 0">
+      <div class="client-card" *ngFor="let client of clients; let i = index">
+        <div class="client-card-content">
+          <div class="client-info">
+            <div class="client-number">{{ (currentPage * itemsPerPage) + i + 1 }}</div>
+            <div class="client-name">{{ client.clientName }}</div>
+          </div>
+          <div class="client-actions" *hasRole="'SUPERVISOR'">
+            <button class="btn btn-sm edit-btn" (click)="openEditClientModal(client)">
+              <i class="fas fa-edit"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Pagination Controls -->
     <div class="pagination-container" *ngIf="totalPages > 1">
