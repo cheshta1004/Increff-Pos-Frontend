@@ -232,21 +232,75 @@ margin :0;
 
 /* Edit button adjustments */
 .edit-btn {
+  position: relative;
   background: transparent;
   color: #6c757d;
   transition: all 0.3s ease;
   padding: 4px 6px;
   font-size: 1rem;
   min-width: 32px;
+  z-index: 3;
+  border: none;
 }
 
 .edit-btn i {
   font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
 .edit-btn:hover {
   color: #495057;
   transform: scale(1.1);
+  background: transparent;
+}
+
+.edit-btn:hover i {
+  color: #495057;
+}
+
+/* Remove any background color changes on hover */
+.edit-btn:hover,
+.edit-btn:focus,
+.edit-btn:active {
+  background: transparent !important;
+  color: #495057 !important;
+}
+
+.edit-btn:hover i,
+.edit-btn:focus i,
+.edit-btn:active i {
+  color: #495057 !important;
+}
+
+.custom-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: rgba(52, 152, 219, 0.95);
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 99999;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin-bottom: 8px;
+}
+
+.edit-btn:hover .custom-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Remove any other tooltip-related styles */
+[title]::after,
+[title]::before {
+  display: none !important;
 }
 
 /* Modal Styling */
@@ -564,6 +618,7 @@ margin :0;
   padding: 1rem 0;
   width: 95%;
   margin: 0 auto;
+  position: relative;
 }
 
 .client-card {
@@ -574,6 +629,7 @@ margin :0;
   overflow: hidden;
   border: 1px solid #edf2f7;
   position: relative;
+  z-index: 1;
 }
 
 .client-card::before {
@@ -639,6 +695,8 @@ margin :0;
   gap: 0.5rem;
   opacity: 0.8;
   transition: opacity 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .client-card:hover .client-actions {
@@ -711,4 +769,173 @@ margin :0;
   .edit-btn i {
     font-size: 0.875rem;
   }
+}
+
+/* Client card specific tooltip adjustments */
+.client-card {
+  position: relative;
+  z-index: 1;
+}
+
+.client-card .edit-btn {
+  position: relative;
+  z-index: 9999;
+}
+
+.client-card .edit-btn[title]::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: rgba(52, 152, 219, 0.95);
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin-bottom: 8px;
+}
+
+.client-card .edit-btn[title]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Override any conflicting tooltip styles */
+.client-card .edit-btn[title]::before {
+  display: none;
+}
+
+/* Tooltip container and positioning */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-container .edit-btn[title]::after {
+  content: attr(title);
+  position: fixed;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: rgba(52, 152, 219, 0.95);
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 99999;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip-container .edit-btn[title]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltip-container .edit-btn {
+  position: relative;
+  z-index: 1;
+}
+
+/* Remove any conflicting tooltip styles */
+.client-card .edit-btn[title]::before,
+.client-card .edit-btn[title]::after {
+  display: none;
+}
+
+/* New tooltip implementation */
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  position: absolute;
+  background: rgba(52, 152, 219, 0.95);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 999999;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+}
+
+/* Adjust tooltip position based on card position */
+.client-card:nth-child(3n) .tooltip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+.client-card:nth-child(3n-1) .tooltip {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.client-card:nth-child(3n-2) .tooltip {
+  left: 0;
+  transform: none;
+}
+
+.tooltip-wrapper:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Ensure tooltip is visible */
+.client-card {
+  overflow: visible !important;
+}
+
+.client-card-content {
+  overflow: visible !important;
+}
+
+.client-actions {
+  overflow: visible !important;
+}
+
+/* Edit button styles */
+.edit-btn {
+  background: transparent;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  padding: 4px 6px;
+  font-size: 1rem;
+  min-width: 32px;
+}
+
+.edit-btn i {
+  font-size: 1rem;
+}
+
+.edit-btn:hover {
+  color: #495057;
+  transform: scale(1.1);
+}
+
+/* Remove old tooltip styles */
+.custom-tooltip,
+[title]::after,
+[title]::before {
+  display: none !important;
 }

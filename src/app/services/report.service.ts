@@ -23,6 +23,15 @@ export class ReportService {
     return this.http.get<DailyReport[]>(`${this.apiUrl}/daily`);
   }
 
+  getDailyReportsByDateRange(startDate: string, endDate: string): Observable<DailyReport[]> {
+    return this.http.get<DailyReport[]>(`${this.apiUrl}/daily/range`, {
+      params: {
+        startDate,
+        endDate
+      }
+    });
+  }
+
   getLatestDailyReports(): Observable<DailyReport[]> {
     return this.http.get<DailyReport[]>(`${this.apiUrl}/daily/latest`);
   }

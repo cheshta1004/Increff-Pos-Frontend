@@ -186,3 +186,65 @@ html, body {
     transform: translateY(-10px);
   }
 }
+
+/* Global Tooltip Styles for Icon-only Buttons */
+[title] {
+  position: relative;
+}
+
+[title]:not([title=""])::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+[title]:not([title=""]):hover::after {
+  opacity: 1;
+  visibility: visible;
+  bottom: -35px;
+}
+
+/* Ensure tooltips don't get cut off */
+.btn-group [title]::after {
+  z-index: 1001;
+}
+
+/* Adjust tooltip position for buttons in card headers */
+.card-header-row [title]::after {
+  bottom: -25px;
+}
+
+.card-header-row [title]:hover::after {
+  bottom: -30px;
+}
+
+/* Adjust tooltip position for search buttons */
+.search-type-btn[title]::after {
+  bottom: -25px;
+}
+
+.search-type-btn[title]:hover::after {
+  bottom: -30px;
+}
+
+/* Adjust tooltip position for clear search button */
+.clear-search[title]::after {
+  bottom: -25px;
+}
+
+.clear-search[title]:hover::after {
+  bottom: -30px;
+}

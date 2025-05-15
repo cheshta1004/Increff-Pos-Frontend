@@ -101,4 +101,33 @@ export class SalesReportComponent implements OnInit {
     };
     this.loadRevenueData();
   }
+
+  downloadReport(): void {
+    try {
+      // Format the dates properly before sending
+      const formattedFilter = {
+        ...this.filter,
+        startDate: this.formatDateForBackend(new Date(this.filter.startDate + 'T00:00:00')),
+        endDate: this.formatEndDateForBackend(new Date(this.filter.endDate + 'T00:00:00'))
+      };
+
+      this.revenueService.downloadSalesReport(formattedFilter).subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `sales-report-${this.filter.startDate}-to-${this.filter.endDate}.pdf`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          this.error = 'Failed to download report';
+          console.error('Error downloading report:', err);
+        }
+      });
+    } catch (error) {
+      this.error = 'Invalid date format';
+      console.error('Date parsing error:', error);
+    }
+  }
 } 

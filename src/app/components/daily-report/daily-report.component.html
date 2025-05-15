@@ -1,4 +1,47 @@
 <div class="daily-report-container">
+  
+
+  <div class="filters-section">
+    <div class="date-presets">
+      <button class="btn btn-outline-primary" (click)="setDateRange('today')">Today</button>
+      <button class="btn btn-outline-primary" (click)="setDateRange('yesterday')">Yesterday</button>
+      <button class="btn btn-outline-primary" (click)="setDateRange('last7days')">Last 7 Days</button>
+      <button class="btn btn-outline-primary" (click)="setDateRange('last30days')">Last 30 Days</button>
+      <button class="btn btn-outline-primary" (click)="setDateRange('thisMonth')">This Month</button>
+    </div>
+
+    <div class="date-inputs">
+      <div class="form-group">
+        <label for="startDate">Start Date:</label>
+        <input 
+          type="date" 
+          id="startDate" 
+          [(ngModel)]="startDate" 
+          [max]="endDate || today" 
+          (change)="loadDailyReport()"
+        >
+      </div>
+      <div class="form-group">
+        <label for="endDate">End Date:</label>
+        <input 
+          type="date" 
+          id="endDate" 
+          [(ngModel)]="endDate" 
+          [min]="startDate" 
+          [max]="today" 
+          (change)="loadDailyReport()"
+        >
+      </div>
+      <button class="btn btn-secondary" (click)="clearFilters()">
+        <i class="fas fa-times"></i>
+        Clear Filters
+      </button>
+      <button class="btn btn-success" (click)="downloadReport()" [disabled]="isLoading">
+        <i class="fas fa-download"></i>
+        Download Report
+      </button>
+    </div>
+  </div>
 
   <div class="table-container">
     <div *ngIf="error" class="error-message">

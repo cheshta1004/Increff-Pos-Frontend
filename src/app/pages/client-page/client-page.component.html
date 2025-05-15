@@ -29,9 +29,12 @@
             <div class="client-name">{{ client.clientName }}</div>
           </div>
           <div class="client-actions" *hasRole="'SUPERVISOR'">
-            <button class="btn btn-sm edit-btn" (click)="openEditClientModal(client)">
-              <i class="fas fa-edit"></i>
-            </button>
+            <div class="tooltip-wrapper">
+              <button class="btn btn-sm edit-btn" (click)="openEditClientModal(client)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <div class="tooltip">Edit Client</div>
+            </div>
           </div>
         </div>
       </div>

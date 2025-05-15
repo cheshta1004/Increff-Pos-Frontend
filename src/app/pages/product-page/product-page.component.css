@@ -79,12 +79,7 @@ h2 {
   gap: 0.5rem;
 }
 
-.btn-outline-primary:hover {
-  color: white;
-  background-color: #3498db;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+
 
 .btn-outline-primary:focus {
   color: white;
@@ -333,26 +328,61 @@ h2 {
 }
 
 /* Edit Button Styling */
+.card .btn-primary.btn-sm,
 .card-img-container .btn-primary.btn-sm {
   position: absolute;
-  top: 0.5rem;
   right: 0.5rem;
-  z-index: 10;
-  background-color: #007bff;
-  color: white;
+  top: 0.25rem;
+  background-color: #6c757d !important;
+  border: none !important;
+  color: white !important;
   padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  opacity: 1;
-  visibility: visible;
+  transition: transform 0.2s ease !important;
+  z-index: 3;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.card-img-container .btn-primary.btn-sm:hover {
-  background-color: #0056b3;
+/* Override all hover states */
+.card .btn-primary.btn-sm:hover,
+.card-img-container .btn-primary.btn-sm:hover,
+.card .btn-primary.btn-sm:focus,
+.card-img-container .btn-primary.btn-sm:focus,
+.card .btn-primary.btn-sm:active,
+.card-img-container .btn-primary.btn-sm:active {
+  background-color: #5a6268 !important;
+  color: white !important;
   transform: scale(1.1);
 }
 
-.card-img-container .btn-primary.btn-sm i {
-  font-size: 1rem;
+/* Override icon colors */
+.card .btn-primary.btn-sm i,
+.card-img-container .btn-primary.btn-sm i,
+.card .btn-primary.btn-sm:hover i,
+.card-img-container .btn-primary.btn-sm:hover i,
+.card .btn-primary.btn-sm:focus i,
+.card-img-container .btn-primary.btn-sm:focus i,
+.card .btn-primary.btn-sm:active i,
+.card-img-container .btn-primary.btn-sm:active i {
+  color: white !important;
+}
+
+/* Remove any other hover effects */
+.card .btn-primary.btn-sm:hover,
+.card-img-container .btn-primary.btn-sm:hover {
+  background-color: #5a6268 !important;
+  color: white !important;
+  transform: scale(1.1);
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove any conflicting styles */
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: inherit !important;
+  color: inherit !important;
 }
 
 /* Card Image */
@@ -1138,12 +1168,6 @@ body.modal-open {
   background-color: transparent;
 }
 
-.btn-outline-secondary:hover {
-  color: white;
-  background-color: #6c757d;
-  border-color: #6c757d;
-}
-
 .btn-info {
   background-color: #17a2b8;
   border-color: #17a2b8;
@@ -1161,11 +1185,6 @@ body.modal-open {
   background-color: transparent;
 }
 
-.btn-outline-primary:hover {
-  color: white;
-  background-color: #007bff;
-  border-color: #007bff;
-}
 
 .btn-ripple {
   position: relative;
@@ -1391,10 +1410,7 @@ body.modal-open {
   color: #6c757d;
 }
 
-.filter-actions .btn-secondary:hover {
-  background: #e9ecef;
-  color: #495057;
-}
+
 
 .filter-actions .btn-primary {
   background: #3498db;
@@ -1471,9 +1487,7 @@ body.modal-open {
   background: #f8f9fa !important;
 }
 
-::ng-deep .filter-body .ng-option:hover {
-  background: #f1f8ff !important;
-}
+
 
 ::ng-deep .filter-body .ng-clear-wrapper {
   color: #95a5a6 !important;
@@ -1583,10 +1597,6 @@ body.modal-open {
   border-bottom: 2px solid #e0e0e0;
 }
 
-.filter-body select option:hover {
-  background-color: #f1f8ff;
-  cursor: pointer;
-}
 
 .filter-body select option:checked {
   background-color: #e8f4fc;
@@ -1785,35 +1795,6 @@ label {
   background-color: #198754;
   border-color: #198754;
   opacity: 0.65;
-}
-
-.card .btn-primary.btn-sm {
-  position: absolute;
-  right: 0.5rem;
-  top: 0.25rem;
-  background-color: #6c757d;
-  border: none;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  transition: all 0.2s ease;
-  z-index: 3;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.card .btn-primary.btn-sm:hover {
-  background-color: #5a6268;
-  transform: scale(1.1);
-}
-
-.card .btn-primary.btn-sm i {
-  font-size: 1rem;
-  color: white;
-}
-
-.card .btn-primary.btn-sm:focus {
-  box-shadow: none;
-  outline: none;
 }
 
 .input-group .btn {
@@ -2240,4 +2221,293 @@ label {
     height: 1.75rem;
     font-size: 0.75rem;
   }
+}
+
+/* Override edit button styles */
+.card .btn-primary.btn-sm.btn-ripple,
+.card-img-container .btn-primary.btn-sm.btn-ripple {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.25rem;
+  background-color: #6c757d !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.25rem 0.5rem;
+  transition: transform 0.2s ease !important;
+  z-index: 3;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Override ripple effect */
+.card .btn-primary.btn-sm.btn-ripple::after,
+.card-img-container .btn-primary.btn-sm.btn-ripple::after {
+  display: none !important;
+}
+
+/* Override all hover states */
+.card .btn-primary.btn-sm.btn-ripple:hover,
+.card-img-container .btn-primary.btn-sm.btn-ripple:hover,
+.card .btn-primary.btn-sm.btn-ripple:focus,
+.card-img-container .btn-primary.btn-sm.btn-ripple:focus,
+.card .btn-primary.btn-sm.btn-ripple:active,
+.card-img-container .btn-primary.btn-sm.btn-ripple:active {
+  background-color: #5a6268 !important;
+  color: white !important;
+  transform: scale(1.1);
+}
+
+/* Override icon colors */
+.card .btn-primary.btn-sm.btn-ripple i,
+.card-img-container .btn-primary.btn-sm.btn-ripple i,
+.card .btn-primary.btn-sm.btn-ripple:hover i,
+.card-img-container .btn-primary.btn-sm.btn-ripple:hover i,
+.card .btn-primary.btn-sm.btn-ripple:focus i,
+.card-img-container .btn-primary.btn-sm.btn-ripple:focus i,
+.card .btn-primary.btn-sm.btn-ripple:active i,
+.card-img-container .btn-primary.btn-sm.btn-ripple:active i {
+  color: white !important;
+}
+
+/* Remove any other hover effects */
+.card .btn-primary.btn-sm.btn-ripple:hover,
+.card-img-container .btn-primary.btn-sm.btn-ripple:hover {
+  background-color: #5a6268 !important;
+  color: white !important;
+  transform: scale(1.1);
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Download template button styles - most specific */
+.container .col-auto .btn-outline-info.btn-ripple,
+.container .col-auto .btn-outline-info.download-btn,
+.container .action-buttons .btn-outline-info.btn-ripple,
+.container .action-buttons .btn-outline-info.download-btn {
+  color: #17a2b8 !important;
+  border: 1px solid #17a2b8 !important;
+  background-color: transparent !important;
+  transition: transform 0.2s ease !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Override ripple effect */
+.container .col-auto .btn-outline-info.btn-ripple::after,
+.container .col-auto .btn-outline-info.download-btn::after,
+.container .action-buttons .btn-outline-info.btn-ripple::after,
+.container .action-buttons .btn-outline-info.download-btn::after {
+  display: none !important;
+}
+
+/* Override all hover states */
+.container .col-auto .btn-outline-info.btn-ripple:hover,
+.container .col-auto .btn-outline-info.download-btn:hover,
+.container .col-auto .btn-outline-info.btn-ripple:focus,
+.container .col-auto .btn-outline-info.download-btn:focus,
+.container .col-auto .btn-outline-info.btn-ripple:active,
+.container .col-auto .btn-outline-info.download-btn:active,
+.container .action-buttons .btn-outline-info.btn-ripple:hover,
+.container .action-buttons .btn-outline-info.download-btn:hover,
+.container .action-buttons .btn-outline-info.btn-ripple:focus,
+.container .action-buttons .btn-outline-info.download-btn:focus,
+.container .action-buttons .btn-outline-info.btn-ripple:active,
+.container .action-buttons .btn-outline-info.download-btn:active {
+  color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+  background-color: transparent !important;
+  transform: translateY(-2px);
+}
+
+/* Override icon colors */
+.container .col-auto .btn-outline-info.btn-ripple i,
+.container .col-auto .btn-outline-info.download-btn i,
+.container .col-auto .btn-outline-info.btn-ripple:hover i,
+.container .col-auto .btn-outline-info.download-btn:hover i,
+.container .col-auto .btn-outline-info.btn-ripple:focus i,
+.container .col-auto .btn-outline-info.download-btn:focus i,
+.container .col-auto .btn-outline-info.btn-ripple:active i,
+.container .col-auto .btn-outline-info.download-btn:active i,
+.container .action-buttons .btn-outline-info.btn-ripple i,
+.container .action-buttons .btn-outline-info.download-btn i,
+.container .action-buttons .btn-outline-info.btn-ripple:hover i,
+.container .action-buttons .btn-outline-info.download-btn:hover i,
+.container .action-buttons .btn-outline-info.btn-ripple:focus i,
+.container .action-buttons .btn-outline-info.download-btn:focus i,
+.container .action-buttons .btn-outline-info.btn-ripple:active i,
+.container .action-buttons .btn-outline-info.download-btn:active i {
+  color: #17a2b8 !important;
+}
+
+/* Remove any other hover effects */
+.container .col-auto .btn-outline-info.btn-ripple:hover,
+.container .col-auto .btn-outline-info.download-btn:hover,
+.container .action-buttons .btn-outline-info.btn-ripple:hover,
+.container .action-buttons .btn-outline-info.download-btn:hover {
+  color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+  background-color: transparent !important;
+  transform: translateY(-2px);
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Override any existing btn-outline-info styles */
+.container .btn-outline-info {
+  color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+  background-color: transparent !important;
+}
+
+.container .btn-outline-info:hover,
+.container .btn-outline-info:focus,
+.container .btn-outline-info:active {
+  color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+  background-color: transparent !important;
+}
+
+/* Override any Bootstrap or other framework styles */
+.btn-outline-info.btn-ripple,
+.btn-outline-info.download-btn {
+  color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-info.btn-ripple:hover,
+.btn-outline-info.download-btn:hover,
+.btn-outline-info.btn-ripple:focus,
+.btn-outline-info.download-btn:focus,
+.btn-outline-info.btn-ripple:active,
+.btn-outline-info.download-btn:active {
+  color: #17a2b8 !important;
+  border-color: #17a2b8 !important;
+  background-color: transparent !important;
+}
+
+/* Tooltip styles for buttons */
+.btn[data-tooltip],
+.btn[title] {
+  position: relative;
+  z-index: 10;
+}
+
+.btn[data-tooltip]:before,
+.btn[title]:before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  z-index: 1000;
+  margin-bottom: 5px;
+}
+
+.btn[title]:before {
+  content: attr(title);
+}
+
+.btn[data-tooltip]:after,
+.btn[title]:after {
+  content: '';
+  position: absolute;
+  bottom: calc(100% - 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.btn[data-tooltip]:hover:before,
+.btn[data-tooltip]:hover:after,
+.btn[title]:hover:before,
+.btn[title]:hover:after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Specific tooltip styles for edit button */
+.card .btn-primary.btn-sm[data-tooltip]:before,
+.card-img-container .btn-primary.btn-sm[data-tooltip]:before {
+  bottom: calc(100% + 5px);
+  z-index: 1001;
+}
+
+.card .btn-primary.btn-sm[data-tooltip]:after,
+.card-img-container .btn-primary.btn-sm[data-tooltip]:after {
+  bottom: calc(100%);
+  z-index: 1001;
+}
+
+/* Specific tooltip styles for download button */
+.btn-outline-info.btn-ripple[data-tooltip]:before,
+.btn-outline-info.download-btn[data-tooltip]:before {
+  bottom: calc(100% + 5px);
+  z-index: 1001;
+}
+
+.btn-outline-info.btn-ripple[data-tooltip]:after,
+.btn-outline-info.download-btn[data-tooltip]:after {
+  bottom: calc(100%);
+  z-index: 1001;
+}
+
+/* Ensure tooltips are visible over other elements */
+.card-img-container {
+  position: relative;
+  z-index: 1;
+}
+
+.card-img-container .btn-primary.btn-sm {
+  position: relative;
+  z-index: 10;
+}
+
+/* Override any conflicting styles */
+.btn-group .btn[data-tooltip]:before,
+.btn-group .btn[data-tooltip]:after {
+  z-index: 1001;
+}
+
+/* Remove default title tooltip */
+.btn[title] {
+  text-decoration: none;
+}
+
+/* Ensure tooltips work in button groups */
+.btn-group .btn[data-tooltip],
+.btn-group .btn[title] {
+  position: relative;
+}
+
+/* Fix tooltip positioning for buttons in card */
+.card .btn[data-tooltip]:before,
+.card .btn[title]:before {
+  bottom: calc(100% + 5px);
+}
+
+.card .btn[data-tooltip]:after,
+.card .btn[title]:after {
+  bottom: calc(100%);
 }
