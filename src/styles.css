@@ -212,6 +212,25 @@ html, body {
 }
 
 [title]:not([title=""]):hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+[title]:not([title=""]):hover::after {
   opacity: 1;
   visibility: visible;
   bottom: -35px;

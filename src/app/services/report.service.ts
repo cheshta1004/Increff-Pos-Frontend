@@ -24,6 +24,7 @@ export class ReportService {
   }
 
   getDailyReportsByDateRange(startDate: string, endDate: string): Observable<DailyReport[]> {
+    // The dates are in YYYY-MM-DD format, backend will append time
     return this.http.get<DailyReport[]>(`${this.apiUrl}/daily/range`, {
       params: {
         startDate,

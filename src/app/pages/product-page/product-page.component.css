@@ -2413,9 +2413,9 @@ label {
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
   pointer-events: none;
-  z-index: 1000;
+  z-index: 9999;
   margin-bottom: 5px;
 }
 
@@ -2435,8 +2435,9 @@ label {
   border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
   pointer-events: none;
+  z-index: 9999;
 }
 
 .btn[data-tooltip]:hover:before,
@@ -2447,39 +2448,26 @@ label {
   visibility: visible;
 }
 
-/* Specific tooltip styles for edit button */
-.card .btn-primary.btn-sm[data-tooltip]:before,
-.card-img-container .btn-primary.btn-sm[data-tooltip]:before {
+/* Specific tooltip styles for download buttons */
+.btn-outline-secondary[data-tooltip]:before,
+.btn-outline-info[data-tooltip]:before {
   bottom: calc(100% + 5px);
-  z-index: 1001;
+  z-index: 9999;
 }
 
-.card .btn-primary.btn-sm[data-tooltip]:after,
-.card-img-container .btn-primary.btn-sm[data-tooltip]:after {
+.btn-outline-secondary[data-tooltip]:after,
+.btn-outline-info[data-tooltip]:after {
   bottom: calc(100%);
-  z-index: 1001;
-}
-
-/* Specific tooltip styles for download button */
-.btn-outline-info.btn-ripple[data-tooltip]:before,
-.btn-outline-info.download-btn[data-tooltip]:before {
-  bottom: calc(100% + 5px);
-  z-index: 1001;
-}
-
-.btn-outline-info.btn-ripple[data-tooltip]:after,
-.btn-outline-info.download-btn[data-tooltip]:after {
-  bottom: calc(100%);
-  z-index: 1001;
+  z-index: 9999;
 }
 
 /* Ensure tooltips are visible over other elements */
-.card-img-container {
+.btn-group {
   position: relative;
   z-index: 1;
 }
 
-.card-img-container .btn-primary.btn-sm {
+.btn-group .btn {
   position: relative;
   z-index: 10;
 }
@@ -2487,7 +2475,7 @@ label {
 /* Override any conflicting styles */
 .btn-group .btn[data-tooltip]:before,
 .btn-group .btn[data-tooltip]:after {
-  z-index: 1001;
+  z-index: 9999;
 }
 
 /* Remove default title tooltip */
@@ -2501,13 +2489,41 @@ label {
   position: relative;
 }
 
-/* Fix tooltip positioning for buttons in card */
-.card .btn[data-tooltip]:before,
-.card .btn[title]:before {
+/* Fix tooltip positioning for buttons in button groups */
+.btn-group .btn[data-tooltip]:before,
+.btn-group .btn[title]:before {
   bottom: calc(100% + 5px);
 }
 
-.card .btn[data-tooltip]:after,
-.card .btn[title]:after {
+.btn-group .btn[data-tooltip]:after,
+.btn-group .btn[title]:after {
   bottom: calc(100%);
 }
+
+/* Override any conflicting styles for download buttons */
+.btn-group .btn-outline-secondary[data-tooltip]:before,
+.btn-group .btn-outline-info[data-tooltip]:before {
+  bottom: calc(100% + 5px);
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.1s ease;
+}
+
+.btn-group .btn-outline-secondary[data-tooltip]:after,
+.btn-group .btn-outline-info[data-tooltip]:after {
+  bottom: calc(100%);
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.1s ease;
+}
+
+.btn-group .btn-outline-secondary[data-tooltip]:hover:before,
+.btn-group .btn-outline-info[data-tooltip]:hover:before,
+.btn-group .btn-outline-secondary[data-tooltip]:hover:after,
+.btn-group .btn-outline-info[data-tooltip]:hover:after {
+  opacity: 1;
+  visibility: visible;
+}
+

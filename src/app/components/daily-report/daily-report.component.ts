@@ -43,10 +43,11 @@ export class DailyReportComponent implements OnInit {
       return false;
     }
 
-    const start = new Date(this.startDate);
-    const end = new Date(this.endDate);
+    // Convert dates to UTC for comparison
+    const start = new Date(this.startDate + 'T00:00:00Z');
+    const end = new Date(this.endDate + 'T23:59:59Z');
     const today = new Date();
-    today.setHours(23, 59, 59, 999); // Set to end of today
+    today.setUTCHours(23, 59, 59, 999); // Set to end of today in UTC
 
     if (start > end) {
       this.toastr.error('Start date cannot be after end date');
@@ -66,27 +67,32 @@ export class DailyReportComponent implements OnInit {
     let start = new Date();
     let end = new Date();
 
+    // Convert to UTC for calculations
+    const utcToday = new Date(today.getTime() - (today.getTimezoneOffset() * 60000));
+    let utcStart = new Date(start.getTime() - (start.getTimezoneOffset() * 60000));
+    const utcEnd = new Date(end.getTime() - (end.getTimezoneOffset() * 60000));
+
     switch (range) {
       case 'today':
         // Start and end are both today
         break;
       case 'yesterday':
-        start.setDate(today.getDate() - 1);
-        end.setDate(today.getDate() - 1);
+        utcStart.setUTCDate(utcToday.getUTCDate() - 1);
+        utcEnd.setUTCDate(utcToday.getUTCDate() - 1);
         break;
       case 'last7days':
-        start.setDate(today.getDate() - 6); // Last 7 days including today
+        utcStart.setUTCDate(utcToday.getUTCDate() - 6); // Last 7 days including today
         break;
       case 'last30days':
-        start.setDate(today.getDate() - 29); // Last 30 days including today
+        utcStart.setUTCDate(utcToday.getUTCDate() - 29); // Last 30 days including today
         break;
       case 'thisMonth':
-        start = new Date(today.getFullYear(), today.getMonth(), 1);
+        utcStart = new Date(Date.UTC(utcToday.getUTCFullYear(), utcToday.getUTCMonth(), 1));
         break;
     }
 
-    this.startDate = this.formatDateForInput(start);
-    this.endDate = this.formatDateForInput(end);
+    this.startDate = this.formatDateForInput(utcStart);
+    this.endDate = this.formatDateForInput(utcEnd);
     this.loadDailyReport();
   }
 
@@ -136,7 +142,22 @@ export class DailyReportComponent implements OnInit {
   }
 
   private formatDateForInput(date: Date): string {
-    return date.toISOString().split('T')[0];
+    // Convert to UTC for input
+    const utcDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return utcDate.toISOString().split('T')[0];
+  }
+
+  private formatDateForBackend(date: Date): string {
+    // Convert to UTC for backend storage
+    const utcDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return utcDate.toISOString();
+  }
+
+  private formatEndDateForBackend(date: Date): string {
+    // Set to end of day in UTC
+    const utcDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    utcDate.setUTCHours(23, 59, 59, 999);
+    return utcDate.toISOString();
   }
 
   formatDate(dateString: string): string {
@@ -153,10 +174,15 @@ export class DailyReportComponent implements OnInit {
         return 'Invalid Date';
       }
 
+      // Format in IST timezone
       return new Intl.DateTimeFormat('en-IN', { 
         year: 'numeric', 
         month: 'short', 
         day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true,
         timeZone: 'Asia/Kolkata'
       }).format(date);
     } catch (error) {

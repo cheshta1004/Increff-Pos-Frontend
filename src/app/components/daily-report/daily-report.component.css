@@ -257,6 +257,37 @@
   font-weight: 500;
 }
 
+.download-btn {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #138496;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.download-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.download-btn i {
+  font-size: 16px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .daily-report-container {

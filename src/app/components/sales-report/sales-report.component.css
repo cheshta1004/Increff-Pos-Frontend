@@ -177,7 +177,7 @@
 }
 
 .download-btn {
-  background-color: #4CAF50;
+  background-color: #17a2b8;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -187,11 +187,13 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
 }
 
 .download-btn:hover {
-  background-color: #45a049;
+  background-color: #138496;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .download-btn i {

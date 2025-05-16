@@ -28,15 +28,16 @@ export class DateFormatPipe implements PipeTransform {
         return 'Invalid date';
       }
       
-      // Format the date
-      return date.toLocaleString('en-US', {
+      // Format the date in IST timezone
+      return date.toLocaleString('en-IN', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
         second: 'numeric',
-        hour12: true
+        hour12: true,
+        timeZone: 'Asia/Kolkata'
       });
     } catch (error) {
       console.error('Error formatting date:', error);

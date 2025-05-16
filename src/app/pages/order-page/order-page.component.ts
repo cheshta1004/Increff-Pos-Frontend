@@ -563,8 +563,15 @@ export class OrderPageComponent implements OnInit {
         if (loadingToast?.toastId) {
           this.toastr.clear(loadingToast.toastId);
         }
-        this.toastr.error('Failed to update order status');
         console.error('Error updating order status:', error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          message: error.message,
+          url: error.url
+        });
+        this.toastr.error(`Failed to update order status: ${error.error?.message || error.message || 'Unknown error'}`);
       }
     });
   }
